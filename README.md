@@ -171,7 +171,19 @@ Response (200):
 
 #### Get All Users
 ```
-GET /api/users
+GET /api/users?email=john@example.com
+```
+
+Query Parameters:
+- `email` (optional): Get users by email address
+
+Response (200):
+```json
+{
+  "success": true,
+  "data": [...],
+  "count": 1
+}
 ```
 
 ---

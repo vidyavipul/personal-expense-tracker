@@ -49,10 +49,18 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
-export const getAllUsers = async (_req: Request, res: Response): Promise<void> => {
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
-    res.json({ success: true, data: users });
+    const { email } = req.query;
+    
+    // Build filter object
+    const filter: any = {};
+    if (email && typeof email === 'string') {
+      filter.email = email.toLowerCase().trim();
+    }
+    
+    const users = await User.find(filter).sort({ createdAt: -1 });
+    res.json({ success: true, data: users, count: users.length });
   } catch {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
