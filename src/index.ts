@@ -12,6 +12,21 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Base URL handler
+app.get('/', (_req, res) => {
+  res.json({
+    success: true,
+    message: 'Welcome to Personal Expense Tracker API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      users: '/api/users',
+      expenses: '/api/expenses',
+      summary: '/api/summary/:userId'
+    }
+  });
+});
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({ success: true, message: 'API is running', timestamp: toIST() });
