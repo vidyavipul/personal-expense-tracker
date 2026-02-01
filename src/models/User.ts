@@ -42,9 +42,6 @@ userSchema.pre('save', function () {
   }
 });
 
-// Index for email uniqueness
-userSchema.index({ email: 1 }, { unique: true });
-
 const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 
 export default User;
