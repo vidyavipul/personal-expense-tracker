@@ -155,3 +155,53 @@ export const partialUpdateUser = async (req: Request, res: Response): Promise<vo
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
+
+// POST - Change email (requires current email verification)
+export const changeUserEmail = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const { currentEmail, newEmail } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ success: false, error: 'Invalid user ID' });
+      return;
+    }
+
+    if (!currentEmail || !newEmail) {
+      res.status(400).json({ success: false, error: 'Current email and new email are required' });
+      return;
+    }
+
+    // Find user and verify current email
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    // Verify current email matches
+    if (user.email.toLowerCase() !== currentEmail.toLowerCase().trim()) {
+      res.status(403).json({ success: false, error: 'Current email does not match' });
+      return;
+    }
+
+    // Check if new email already exists
+    const emailExists = await User.findOne({ email: newEmail.toLowerCase().trim(), _id: { $ne: id } });
+    if (emailExists) {
+      res.status(409).json({ success: false, error: 'New email already exists' });
+      return;
+    }
+
+    // Update email
+    user.email = newEmail.toLowerCase().trim();
+    await user.save();
+
+    res.json({ success: true, message: 'Email updated successfully', data: user });
+  } catch (error: unknown) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ success: false, error: error.message });
+      return;
+    }
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
