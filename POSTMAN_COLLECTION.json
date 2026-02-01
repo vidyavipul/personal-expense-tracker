@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "Personal Expense Tracker API",
+    "description": "API endpoints for managing personal expenses",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"monthlyBudget\": 5000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "users"]
+        }
+      }
+    },
+    {
+      "name": "Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/users/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "users", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "697f1f22cae5d1938c31ae3d",
+              "description": "User ID"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/users",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "users"]
+        }
+      }
+    },
+    {
+      "name": "Create Expense",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Grocery Shopping\",\n  \"amount\": 150.50,\n  \"category\": \"Food\",\n  \"date\": \"2026-02-01\",\n  \"userId\": \"697f1f22cae5d1938c31ae3d\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/expenses",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "expenses"]
+        }
+      }
+    },
+    {
+      "name": "Get User Expenses",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/expenses/user/:id?page=1&limit=10",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "expenses", "user", ":id"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number (default: 1)"
+            },
+            {
+              "key": "limit",
+              "value": "10",
+              "description": "Items per page (default: 10, max: 100)"
+            },
+            {
+              "key": "category",
+              "value": "Food",
+              "description": "Filter by category",
+              "disabled": true
+            },
+            {
+              "key": "startDate",
+              "value": "2026-02-01",
+              "description": "Filter by start date (YYYY-MM-DD)",
+              "disabled": true
+            },
+            {
+              "key": "endDate",
+              "value": "2026-02-28",
+              "description": "Filter by end date (YYYY-MM-DD)",
+              "disabled": true
+            }
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "697f1f22cae5d1938c31ae3d",
+              "description": "User ID"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get User Summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/summary/:id",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "summary", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "697f1f22cae5d1938c31ae3d",
+              "description": "User ID"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
