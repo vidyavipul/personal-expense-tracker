@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { connectDatabase } from './config/database';
 import routes from './routes';
+import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
 
@@ -22,6 +23,9 @@ app.use('/api', routes);
 app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
 });
+
+// Global error handler
+app.use(errorHandler);
 
 // Start server
 const PORT = process.env.PORT || 3000;
