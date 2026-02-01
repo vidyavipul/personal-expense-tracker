@@ -1,0 +1,29 @@
+{
+  "name": "personal-expense-tracker",
+  "version": "1.0.0",
+  "description": "Node.js + Express backend for a Personal Expense Tracker with MongoDB and Mongoose, featuring user-wise expense tracking, monthly summaries, schema relationships, validations, and middleware usage.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vidyavipul/personal-expense-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/vidyavipul/personal-expense-tracker/issues"
+  },
+  "homepage": "https://github.com/vidyavipul/personal-expense-tracker#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
