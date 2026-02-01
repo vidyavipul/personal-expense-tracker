@@ -18,7 +18,10 @@ A Node.js + Express + TypeScript backend for a Personal Expense Tracker with Mon
 - ✅ Expense categorization (Food, Travel, Shopping, etc.)
 - ✅ Monthly expense summary with budget utilization
 - ✅ Pagination support for expense listing
-- ✅ Filtering by category and date range
+- ✅ Filtering by category, date range, and email
+- ✅ Full and partial update support (PUT/PATCH) for users and expenses
+- ✅ Secure email change endpoint with verification
+- ✅ IST (Indian Standard Time) formatted timestamps
 - ✅ Mongoose middleware for data validation and consistency
 - ✅ Comprehensive error handling
 
@@ -101,7 +104,26 @@ This project uses **MongoDB Atlas** (cloud-hosted MongoDB). To set up:
 
 ### Base URL
 ```
-http://localhost:3000/api
+http://localhost:3000
+```
+
+### Welcome Endpoint
+```
+GET /
+```
+Response:
+```json
+{
+  "success": true,
+  "message": "Welcome to Personal Expense Tracker API",
+  "version": "1.0.0",
+  "endpoints": {
+    "health": "/health",
+    "users": "/api/users",
+    "expenses": "/api/expenses",
+    "summary": "/api/summary/:userId"
+  }
+}
 ```
 
 ### Health Check
@@ -112,8 +134,8 @@ Response:
 ```json
 {
   "success": true,
-  "message": "Personal Expense Tracker API is running",
-  "timestamp": "2026-02-01T10:00:00.000Z"
+  "message": "API is running",
+  "timestamp": "2026-02-01T20:29:02.292+05:30"
 }
 ```
 
@@ -137,14 +159,13 @@ Response (201):
 ```json
 {
   "success": true,
-  "message": "User created successfully",
   "data": {
     "_id": "...",
     "name": "John Doe",
     "email": "john@example.com",
     "monthlyBudget": 5000,
-    "createdAt": "2026-02-01T10:00:00.000Z",
-    "updatedAt": "2026-02-01T10:00:00.000Z"
+    "createdAt": "01-02-2026 15:30:00 IST",
+    "updatedAt": "01-02-2026 15:30:00 IST"
   }
 }
 ```
@@ -157,14 +178,13 @@ Response (200):
 ```json
 {
   "success": true,
-  "message": "User retrieved successfully",
   "data": {
     "_id": "...",
     "name": "John Doe",
     "email": "john@example.com",
     "monthlyBudget": 5000,
-    "createdAt": "2026-02-01T10:00:00.000Z",
-    "updatedAt": "2026-02-01T10:00:00.000Z"
+    "createdAt": "01-02-2026 15:30:00 IST",
+    "updatedAt": "01-02-2026 15:30:00 IST"
   }
 }
 ```
@@ -175,7 +195,7 @@ GET /api/users?email=john@example.com
 ```
 
 Query Parameters:
-- `email` (optional): Get users by email address
+- `email` (optional): Filter users by email address
 
 Response (200):
 ```json
@@ -183,6 +203,90 @@ Response (200):
   "success": true,
   "data": [...],
   "count": 1
+}
+```
+
+#### Update User (Full Update)
+```
+PUT /api/users/:id
+```
+Request Body:
+```json
+{
+  "name": "John Updated",
+  "monthlyBudget": 6000
+}
+```
+**Note:** Email cannot be updated via PUT/PATCH for security reasons. Use the change-email endpoint instead.
+
+Response (200):
+```json
+{
+  "success": true,
+  "message": "User updated successfully",
+  "data": {
+    "_id": "...",
+    "name": "John Updated",
+    "email": "john@example.com",
+    "monthlyBudget": 6000,
+    "createdAt": "01-02-2026 15:30:00 IST",
+    "updatedAt": "01-02-2026 16:45:00 IST"
+  }
+}
+```
+
+#### Update User (Partial Update)
+```
+PATCH /api/users/:id
+```
+Request Body (one or more fields):
+```json
+{
+  "name": "John Smith"
+}
+```
+Response (200):
+```json
+{
+  "success": true,
+  "message": "User partially updated successfully",
+  "data": {
+    "_id": "...",
+    "name": "John Smith",
+    "email": "john@example.com",
+    "monthlyBudget": 6000,
+    "createdAt": "01-02-2026 15:30:00 IST",
+    "updatedAt": "01-02-2026 17:00:00 IST"
+  }
+}
+```
+
+#### Change User Email
+```
+POST /api/users/:id/change-email
+```
+Request Body:
+```json
+{
+  "currentEmail": "john@example.com",
+  "newEmail": "newemail@example.com"
+}
+```
+**Security:** Requires current email verification to prevent unauthorized email changes.
+
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Email updated successfully",
+  "data": {
+    "_id": "...",
+    "name": "John Smith",
+    "email": "newemail@example.com",
+    "monthlyBudget": 6000,
+    "createdAt": "01-02-2026 15:30:00 IST",
+    "updatedAt": "01-02-2026 17:15:00 IST"
+  }
 }
 ```
 
@@ -211,20 +315,84 @@ Response (201):
 ```json
 {
   "success": true,
-  "message": "Expense created successfully",
   "data": {
     "_id": "...",
     "title": "Lunch at restaurant",
     "amount": 25.50,
     "category": "Food",
-    "date": "2026-02-01T00:00:00.000Z",
+    "date": "01-02-2026 00:00:00 IST",
+    "userId": "...",
+    "createdAt": "01-02-2026 15:45:00 IST",
+    "updatedAt": "01-02-2026 15:45:00 IST"
+  }
+}
+```
+
+#### Update Expense (Full Update)
+```
+PUT /api/expenses/:id
+```
+Request Body:
+```json
+{
+  "title": "Dinner at restaurant",
+  "amount": 45.00,
+  "category": "Food",
+  "date": "2026-02-02",
+  "userId": "<user_id>"
+}
+```
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Expense updated successfully",
+  "data": {
+    "_id": "...",
+    "title": "Dinner at restaurant",
+    "amount": 45.00,
+    "category": "Food",
+    "date": "02-02-2026 00:00:00 IST",
     "userId": {
       "_id": "...",
       "name": "John Doe",
       "email": "john@example.com"
     },
-    "createdAt": "2026-02-01T10:00:00.000Z",
-    "updatedAt": "2026-02-01T10:00:00.000Z"
+    "createdAt": "01-02-2026 15:45:00 IST",
+    "updatedAt": "01-02-2026 18:30:00 IST"
+  }
+}
+```
+
+#### Update Expense (Partial Update)
+```
+PATCH /api/expenses/:id
+```
+Request Body (one or more fields):
+```json
+{
+  "amount": 50.00,
+  "category": "Entertainment"
+}
+```
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Expense partially updated successfully",
+  "data": {
+    "_id": "...",
+    "title": "Dinner at restaurant",
+    "amount": 50.00,
+    "category": "Entertainment",
+    "date": "02-02-2026 00:00:00 IST",
+    "userId": {
+      "_id": "...",
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "createdAt": "01-02-2026 15:45:00 IST",
+    "updatedAt": "01-02-2026 19:00:00 IST"
   }
 }
 ```
@@ -308,7 +476,10 @@ All error responses follow this format:
 ```
 
 Common HTTP Status Codes:
+- `200` - OK (successful GET, PUT, PATCH)
+- `201` - Created (successful POST)
 - `400` - Bad Request (validation errors, invalid input)
+- `403` - Forbidden (email verification failed)
 - `404` - Not Found (resource doesn't exist)
 - `409` - Conflict (duplicate email)
 - `500` - Internal Server Error
@@ -344,10 +515,11 @@ This project demonstrates proper use of Mongoose middleware/hooks:
 ## Assumptions
 
 1. **Current month summary**: The summary endpoint returns data for the current calendar month only
-2. **Date handling**: Dates are stored in UTC; clients should handle timezone conversions
+2. **Date handling**: All timestamps are displayed in IST (Indian Standard Time, UTC+5:30) format: DD-MM-YYYY HH:MM:SS IST
 3. **Budget**: Monthly budget is a single value (not category-specific)
-4. **Authentication**: No authentication implemented (out of scope for this assignment)
+4. **Authentication**: No authentication implemented - email change requires current email verification as a security measure
 5. **Currency**: All amounts are assumed to be in a single currency (no currency conversion)
+6. **Email updates**: Email cannot be updated via PUT/PATCH endpoints for security. Use the dedicated `/api/users/:id/change-email` endpoint
 
 ---
 
