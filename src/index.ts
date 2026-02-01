@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connectDatabase } from './config/database';
 import routes from './routes';
 import { errorHandler } from './middleware/errorHandler';
+import { toIST } from './utils/helpers';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Health check
 app.get('/health', (_req, res) => {
-  res.json({ success: true, message: 'API is running', timestamp: new Date().toISOString() });
+  res.json({ success: true, message: 'API is running', timestamp: toIST() });
 });
 
 // API routes

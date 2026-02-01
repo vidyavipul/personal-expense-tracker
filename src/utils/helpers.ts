@@ -19,3 +19,11 @@ export const getCurrentMonthRange = () => {
   const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
   return { startOfMonth: start, endOfMonth: end };
 };
+
+// Convert UTC date to IST (Indian Standard Time - UTC+5:30)
+export const toIST = (date: Date = new Date()): string => {
+  const utcTime = date.getTime();
+  const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+  const istTime = new Date(utcTime + istOffset);
+  return istTime.toISOString().replace('Z', '+05:30');
+};
