@@ -65,3 +65,93 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
+
+// PUT - Full update (name and monthlyBudget only, email excluded)
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const { name, monthlyBudget } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ success: false, error: 'Invalid user ID' });
+      return;
+    }
+
+    // For PUT, both fields are required
+    if (!name || monthlyBudget === undefined) {
+      res.status(400).json({ success: false, error: 'Name and monthlyBudget are required' });
+      return;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { name, monthlyBudget },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    res.json({ success: true, message: 'User updated successfully', data: user });
+  } catch (error: unknown) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ success: false, error: error.message });
+      return;
+    }
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
+// PATCH - Partial update (name and/or monthlyBudget, email excluded)
+export const partialUpdateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const updates = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ success: false, error: 'Invalid user ID' });
+      return;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      res.status(400).json({ success: false, error: 'No fields to update' });
+      return;
+    }
+
+    // Only allow name and monthlyBudget updates (email excluded for security)
+    const allowedFields = ['name', 'monthlyBudget'];
+    const filteredUpdates: Record<string, unknown> = {};
+    
+    for (const key of Object.keys(updates)) {
+      if (allowedFields.includes(key)) {
+        filteredUpdates[key] = updates[key];
+      }
+    }
+
+    if (Object.keys(filteredUpdates).length === 0) {
+      res.status(400).json({ success: false, error: 'No valid fields to update. Only name and monthlyBudget can be updated.' });
+      return;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      filteredUpdates,
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    res.json({ success: true, message: 'User partially updated successfully', data: user });
+  } catch (error: unknown) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      res.status(400).json({ success: false, error: error.message });
+      return;
+    }
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
