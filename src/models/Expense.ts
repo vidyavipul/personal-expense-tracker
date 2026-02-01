@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema, Model, Types } from 'mongoose';
 import User from './User';
+import { formatDateIST } from '../utils/helpers';
 
 export const EXPENSE_CATEGORIES = [
   'Food', 'Travel', 'Shopping', 'Entertainment', 'Bills', 'Healthcare', 'Education', 'Other'
@@ -46,7 +47,18 @@ const expenseSchema = new Schema<IExpense>(
       required: [true, 'User ID is required'],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (_doc, ret) => {
+        const transformed: any = { ...ret };
+        if (transformed.createdAt) transformed.createdAt = formatDateIST(transformed.createdAt);
+        if (transformed.updatedAt) transformed.updatedAt = formatDateIST(transformed.updatedAt);
+        if (transformed.date) transformed.date = formatDateIST(transformed.date);
+        return transformed;
+      },
+    },
+  }
 );
 
 // Pre-validate: check if user exists

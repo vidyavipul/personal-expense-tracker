@@ -27,3 +27,19 @@ export const toIST = (date: Date = new Date()): string => {
   const istTime = new Date(utcTime + istOffset);
   return istTime.toISOString().replace('Z', '+05:30');
 };
+
+// Format date to readable IST format: DD-MM-YYYY HH:MM:SS IST
+export const formatDateIST = (date: Date): string => {
+  const utcTime = date.getTime();
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const istTime = new Date(utcTime + istOffset);
+  
+  const day = String(istTime.getUTCDate()).padStart(2, '0');
+  const month = String(istTime.getUTCMonth() + 1).padStart(2, '0');
+  const year = istTime.getUTCFullYear();
+  const hours = String(istTime.getUTCHours()).padStart(2, '0');
+  const minutes = String(istTime.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(istTime.getUTCSeconds()).padStart(2, '0');
+  
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds} IST`;
+};

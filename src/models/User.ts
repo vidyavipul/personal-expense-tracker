@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
+import { formatDateIST } from '../utils/helpers';
 
 export interface IUser extends Document {
   name: string;
@@ -30,7 +31,17 @@ const userSchema = new Schema<IUser>(
       min: [1, 'Monthly budget must be greater than 0'],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (_doc, ret) => {
+        const transformed: any = { ...ret };
+        if (transformed.createdAt) transformed.createdAt = formatDateIST(transformed.createdAt);
+        if (transformed.updatedAt) transformed.updatedAt = formatDateIST(transformed.updatedAt);
+        return transformed;
+      },
+    },
+  }
 );
 
 // Pre-save: normalize and round budget
