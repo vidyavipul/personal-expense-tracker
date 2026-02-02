@@ -7,8 +7,11 @@ export const isValidObjectId = (id: string): boolean => {
 
 // Parse pagination from query params
 export const parsePagination = (page?: string, limit?: string) => {
+  const defaultPageSize = parseInt(process.env.DEFAULT_PAGE_SIZE || '10', 10);
+  const maxPageSize = parseInt(process.env.MAX_PAGE_SIZE || '100', 10);
+  
   const pageNum = Math.max(1, parseInt(page || '1', 10) || 1);
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit || '10', 10) || 10));
+  const limitNum = Math.min(maxPageSize, Math.max(1, parseInt(limit || String(defaultPageSize), 10) || defaultPageSize));
   return { page: pageNum, limit: limitNum, skip: (pageNum - 1) * limitNum };
 };
 
