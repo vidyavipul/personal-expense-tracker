@@ -290,6 +290,21 @@ Response (200):
 }
 ```
 
+#### Delete User
+```
+DELETE /api/users/:id
+```
+**Note:** Deleting a user will also delete all expenses associated with that user (cascade delete).
+
+Response (200):
+```json
+{
+  "success": true,
+  "message": "User and associated expenses deleted successfully",
+  "deletedExpenses": 2
+}
+```
+
 ---
 
 ### Expense Endpoints
@@ -394,6 +409,18 @@ Response (200):
     "createdAt": "01-02-2026 15:45:00 IST",
     "updatedAt": "01-02-2026 19:00:00 IST"
   }
+}
+```
+
+#### Delete Expense
+```
+DELETE /api/expenses/:id
+```
+Response (200):
+```json
+{
+  "success": true,
+  "message": "Expense deleted successfully"
 }
 ```
 
