@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createUser, getUserById, getAllUsers, updateUser, partialUpdateUser, changeUserEmail } from '../controllers/userController';
+import { createUser, getUserById, getAllUsers, updateUser, partialUpdateUser, changeUserEmail, deleteUser } from '../controllers/userController';
 import { getUserExpenses } from '../controllers/expenseController';
 import { getUserSummary } from '../controllers/summaryController';
 
@@ -10,6 +10,7 @@ router.get('/', getAllUsers);
 router.get('/:id', getUserById);
 router.put('/:id', updateUser);
 router.patch('/:id', partialUpdateUser);
+router.delete('/:id', deleteUser);
 router.post('/:id/change-email', changeUserEmail);
 router.get('/:id/expenses', getUserExpenses);
 router.get('/:id/summary', getUserSummary);

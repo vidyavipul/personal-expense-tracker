@@ -205,3 +205,26 @@ export const partialUpdateExpense = async (req: Request, res: Response): Promise
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
+
+// DELETE - Delete individual expense
+export const deleteExpense = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ success: false, error: 'Invalid expense ID' });
+      return;
+    }
+
+    const expense = await Expense.findByIdAndDelete(id);
+
+    if (!expense) {
+      res.status(404).json({ success: false, error: 'Expense not found' });
+      return;
+    }
+
+    res.json({ success: true, message: 'Expense deleted successfully' });
+  } catch {
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};

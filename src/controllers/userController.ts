@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
+import Expense from '../models/Expense';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -202,6 +203,39 @@ export const changeUserEmail = async (req: Request, res: Response): Promise<void
       res.status(400).json({ success: false, error: error.message });
       return;
     }
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
+// DELETE - Delete user and all their expenses (cascade delete)
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      res.status(400).json({ success: false, error: 'Invalid user ID' });
+      return;
+    }
+
+    // Check if user exists
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    // Delete all expenses associated with this user
+    const deleteResult = await Expense.deleteMany({ userId: id });
+
+    // Delete the user
+    await User.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: 'User and associated expenses deleted successfully',
+      deletedExpenses: deleteResult.deletedCount,
+    });
+  } catch {
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
