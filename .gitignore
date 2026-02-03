@@ -148,3 +148,7 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Other files for myself only
+API_TESTING_GUIDE.md
+MONGODB_COMPASS_GUIDE.md
