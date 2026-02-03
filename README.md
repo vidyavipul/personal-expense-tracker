@@ -7,8 +7,11 @@ A Node.js + Express + TypeScript backend for a Personal Expense Tracker with Mon
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
 - **TypeScript** - Type safety and better developer experience
-- **MongoDB Atlas** - Cloud-hosted database
+- **MongoDB Atlas** - Cloud-hosted database (production)
+- **MongoDB** - Local containerized database (development)
 - **Mongoose** - MongoDB ODM with schema validation
+- **Docker** - Containerization and orchestration
+- **Docker Compose** - Multi-container orchestration
 
 ## Features
 
@@ -24,6 +27,47 @@ A Node.js + Express + TypeScript backend for a Personal Expense Tracker with Mon
 - ✅ IST (Indian Standard Time) formatted timestamps
 - ✅ Mongoose middleware for data validation and consistency
 - ✅ Comprehensive error handling
+
+## Quick Start with Docker 🐳 (Recommended)
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+### 1. Start services
+
+```bash
+docker-compose up
+```
+
+This starts:
+- **API**: http://localhost:3000
+- **MongoDB**: mongodb://localhost:27017/expense-tracker
+
+### 2. Test the API
+
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# Create a user
+curl -X POST http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "monthlyBudget": 5000
+  }'
+```
+
+### 3. Stop services
+
+```bash
+docker-compose down
+```
+
+**✅ That's it!** No Node.js or MongoDB installation needed.
+
+> 📚 For detailed Docker documentation, see the local `DOCKER.md` file after cloning
 
 ## Project Structure
 
