@@ -9,6 +9,9 @@
 seed-database.ts
 seed-*.ts
 
+# Documentation with sensitive information
+DOCKER.md
+
 # Logs
 logs
 *.log
