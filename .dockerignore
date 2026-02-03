@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.env.example
+coverage
+dist
+.DS_Store
+seed-db.ts
+migrate-db.ts
+jest.config.js
+PROMPTS_USED.md
